@@ -1,0 +1,578 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>CS61A Midterm 2 Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: problem index on the left, one problem workspace on the right (stacked on phones). */
+:root {
+  --bg: #f3f5f8; --panel: #ffffff; --ink: #14202e; --muted: #5a6879; --line: #d8dfe8;
+  --accent: #1d4f91; --accent-ink: #ffffff; --accent-soft: #e4edf8;
+  --ok: #17794a; --ok-soft: #e0f3ea; --bad: #b3261e; --bad-soft: #fbe8e6;
+  --code-bg: #fafbfd; --code-ink: #14202e;
+  --font-ui: "IBM Plex Sans", system-ui, -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-code: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1621; --panel: #152130; --ink: #e6edf5; --muted: #93a2b5; --line: #26364a;
+    --accent: #6ea8ff; --accent-ink: #0b1624; --accent-soft: #1b2e48;
+    --ok: #4cc38a; --ok-soft: #14352a; --bad: #ff7b72; --bad-soft: #3c1b1b;
+    --code-bg: #0b121b; --code-ink: #e6edf5; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1621; --panel: #152130; --ink: #e6edf5; --muted: #93a2b5; --line: #26364a;
+  --accent: #6ea8ff; --accent-ink: #0b1624; --accent-soft: #1b2e48;
+  --ok: #4cc38a; --ok-soft: #14352a; --bad: #ff7b72; --bad-soft: #3c1b1b;
+  --code-bg: #0b121b; --code-ink: #e6edf5; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.55; padding-inline: 16px; padding-block: 16px 40px; }
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+header.top h1 { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+header.top p { margin: 0; color: var(--muted); font-size: 13px; }
+.progress { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { width: 140px; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .25s; }
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 16px; align-items: start; }
+nav.index { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+nav.index .grp { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 10px 8px 4px; }
+nav.index button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 8px; border-radius: 6px; font-size: 14px; }
+nav.index button:hover { background: var(--accent-soft); }
+nav.index button[aria-current="true"] { background: var(--accent); color: var(--accent-ink); }
+nav.index button:focus-visible, .btn:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+nav.index .score { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+nav.index button[aria-current="true"] .score { color: var(--accent-ink); opacity: .85; }
+nav.index .score.done { color: var(--ok); font-weight: 600; }
+nav.index button[aria-current="true"] .score.done { color: var(--accent-ink); }
+main.work { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; min-width: 0; }
+.crumb { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.crumb .lv { color: var(--accent); }
+h2 { font-size: 22px; font-weight: 600; margin: 4px 0 2px; letter-spacing: -0.01em; }
+.src { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+.prompt p { margin: 0 0 10px; max-width: 72ch; }
+code { font-family: var(--font-code); font-size: .9em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+pre { font-family: var(--font-code); font-size: 13px; line-height: 1.5; background: var(--code-bg); color: var(--code-ink); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; margin: 0; overflow-x: auto; }
+.label { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; }
+details.given { margin-top: 12px; }
+details.given summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+details.given pre { margin-top: 8px; }
+.editor-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.editor-head h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.editor-head span { font-size: 12px; color: var(--muted); }
+textarea#code { width: 100%; display: block; font-family: var(--font-code); font-size: 13.5px; line-height: 1.55; tab-size: 4; background: var(--code-bg); color: var(--code-ink); border: 1px solid var(--line); border-radius: 6px; padding: 12px; resize: vertical; min-height: 200px; white-space: pre; overflow: auto; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+.btn { font: inherit; font-size: 14px; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; padding: 8px 14px; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
+.btn:disabled { opacity: .55; cursor: default; }
+.status { font-size: 13px; color: var(--muted); }
+.hints { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.hint { background: var(--accent-soft); border-radius: 6px; padding: 8px 12px; font-size: 14px; }
+.hint b { font-weight: 600; }
+.results .summary { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 10px; }
+.pill { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; font-variant-numeric: tabular-nums; }
+.pill.pass { background: var(--ok-soft); color: var(--ok); }
+.pill.fail { background: var(--bad-soft); color: var(--bad); }
+.tests { display: flex; flex-direction: column; gap: 6px; }
+.t { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; align-items: start; }
+.t .body { min-width: 0; font-family: var(--font-code); font-size: 12.5px; }
+.t .body div { overflow-x: auto; white-space: pre; }
+.t .setup { color: var(--muted); }
+.t .diff { margin-top: 4px; color: var(--bad); }
+.t .diff span { color: var(--muted); }
+.err { color: var(--bad); font-family: var(--font-code); font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.empty { color: var(--muted); }
+.ask { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.ask-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ask-row input { flex: 1 1 260px; min-width: 0; font: inherit; font-size: 14px; color: var(--ink); background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; }
+.ask-row input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ask-note { display: block; color: var(--muted); font-size: 12px; margin-top: 6px; }
+.ask-out { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ask-out .sum { margin: 0; font-size: 14px; }
+.ask-out .status-line { color: var(--muted); font-size: 14px; }
+.annot { border: 1px solid var(--line); border-radius: 6px; background: var(--code-bg); overflow-x: auto; font-family: var(--font-code); font-size: 13px; line-height: 1.55; }
+.annot .ln { display: grid; grid-template-columns: 36px minmax(0, 1fr); }
+.annot .ln > i { font-style: normal; text-align: right; padding: 0 8px 0 0; color: var(--muted); user-select: none; }
+.annot .ln > span { white-space: pre; padding-right: 12px; }
+.annot .ln.flag > i, .annot .ln.flag > span { background: var(--bad-soft); }
+.annot .ln.flag > i { color: var(--bad); font-weight: 500; }
+.annot .note { grid-column: 1 / -1; font-family: var(--font-ui); font-size: 13.5px; white-space: normal; background: var(--accent-soft); padding: 8px 12px 8px 44px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.annot .note p { margin: 0 0 4px; }
+.annot .note .fix { color: var(--muted); }
+.annot .note .fix code { background: transparent; }
+.general { background: var(--bad-soft); border-radius: 6px; padding: 8px 12px; font-size: 14px; }
+.general p { margin: 0 0 4px; }
+.bubble { border-radius: 6px; padding: 8px 12px; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bubble.q { background: var(--accent-soft); }
+.bubble.a { border: 1px solid var(--line); }
+.solbox { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.solbox .col { min-width: 0; }
+.explain h4 { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+.explain h4 + * { margin-top: 0; }
+.explain section { margin-bottom: 14px; }
+.explain p { margin: 0 0 6px; font-size: 14px; }
+.explain ul { margin: 0; padding-left: 20px; font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
+.explain .mine { background: var(--bad-soft); border-radius: 6px; padding: 8px 12px; }
+.explain .mine.good { background: var(--ok-soft); }
+.explain .mine .why { margin-top: 6px; }
+.explain small { color: var(--muted); display: block; margin-top: 4px; }
+@media (max-width: 820px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  nav.index { position: static; max-height: none; flex-direction: row; overflow-x: auto; overflow-y: hidden; gap: 6px; padding: 8px; }
+  nav.index .grp { display: none; }
+  nav.index button { flex: none; white-space: nowrap; border: 1px solid var(--line); }
+  .card { padding: 14px; }
+  .t { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .solbox { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>CS61A Midterm 2 Practice</h1>
+      <p>Midterm 1 material + recursion (1.7), sequences (2.2), linked lists (2.3). Original problems modeled on past Midterm 2 question types.</p>
+    </div>
+    <div class="progress"><span id="prog-text">0 / 0 done</span><div class="bar"><i id="prog-bar"></i></div></div>
+  </header>
+  <div class="layout">
+    <nav class="index" id="index" aria-label="Problem list"></nav>
+    <main class="work">
+      <section class="card">
+        <div class="crumb"><span id="c-topic"></span><span class="lv" id="c-level"></span></div>
+        <h2 id="c-title"></h2>
+        <p class="src" id="c-source"></p>
+        <div class="prompt" id="c-prompt"></div>
+        <div class="label">Examples</div>
+        <pre id="c-examples"></pre>
+        <details class="given"><summary>Provided code (Link class and ll helper; you do not need to write these)</summary><pre id="c-prelude"></pre></details>
+      </section>
+      <section class="card">
+        <div class="editor-head"><h3>Your answer</h3><span>Auto-indent · Ctrl/Cmd + Enter to run</span></div>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Python code"></textarea>
+        <div class="actions">
+          <button class="btn primary" id="run">Run tests</button>
+          <button class="btn" id="hint">Hint</button>
+          <button class="btn" id="reset">Reset code</button>
+          <button class="btn" id="sol">Show solution</button>
+          <span class="status" id="status"></span>
+        </div>
+        <div class="hints" id="hints"></div>
+        <div class="ask" id="ask" hidden>
+          <div class="label" style="margin-top:0">Ask Claude</div>
+          <div class="ask-row">
+            <input id="ask-q" type="text" autocomplete="off" placeholder="Ask anything, e.g. why do I get a RecursionError? Leave empty to check my code">
+            <button class="btn primary" id="ask-find">Find my mistakes</button>
+            <button class="btn" id="ask-chat">Ask</button>
+            <button class="btn" id="ask-stop" hidden>Stop</button>
+          </div>
+          <small class="ask-note">Uses your own Claude usage, and you will be asked to allow it the first time. Claude only sees your current code and your latest test results.</small>
+          <div id="ask-out" class="ask-out" aria-live="polite"></div>
+        </div>
+        <div class="solbox" id="solbox" hidden>
+          <div class="col"><div class="label" style="margin-top:0">Reference solution (not the only way to write it)</div><pre id="sol-code"></pre></div>
+          <aside class="col explain" id="explain"></aside>
+        </div>
+      </section>
+      <section class="card results" id="results"><div class="empty">Run the tests and the result of every test case appears here.</div></section>
+    </main>
+  </div>
+</div>
+
+<script>
+function buildProgram(prelude, code, tests) {
+  var out = prelude + "\n" + code + "\n\n";
+  tests.forEach(function (t, i) {
+    out += "try:\n";
+    (t.setup ? t.setup.split("\n") : []).forEach(function (l) { out += "    " + l + "\n"; });
+    out += "    __g = repr(" + t.expr + ")\n";
+    out += "    __e = repr(" + t.expected + ")\n";
+    out += "    print('@@T\\t" + i + "\\t' + str(__g == __e) + '\\t' + __g + '\\t' + __e)\n";
+    out += "except BaseException as __x:\n";
+    out += "    print('@@T\\t" + i + "\\tERR\\t' + type(__x).__name__ + ': ' + str(__x) + '\\t')\n";
+  });
+  return out;
+}
+function parseResults(lines, n) {
+  var res = [];
+  for (var i = 0; i < n; i++) res.push({ status: "ERR", got: "no result", exp: "" });
+  lines.forEach(function (ln) {
+    ln.split("\n").forEach(function (l) {
+      if (l.indexOf("@@T\t") !== 0) return;
+      var p = l.split("\t");
+      var k = parseInt(p[1], 10);
+      res[k] = { status: p[2] === "True" ? "PASS" : (p[2] === "False" ? "FAIL" : "ERR"), got: p[3], exp: p.slice(4).join("\t") };
+    });
+  });
+  return res;
+}
+
+var DATA = {"prelude": "class Link:\n    empty = ()\n    def __init__(self, first, rest=()):\n        self.first = first\n        self.rest = rest\n    def __repr__(self):\n        s = '(' + repr(self.first)\n        r = self.rest\n        while r != Link.empty:\n            s += ' ' + repr(r.first)\n            r = r.rest\n        return s + ')'\n\ndef ll(*vals):\n    \"\"\"Build a linked list: ll(3, 4, 5) is (3 4 5).\"\"\"\n    result = Link.empty\n    for i in range(len(vals) - 1, -1, -1):\n        result = Link(vals[i], result)\n    return result\n", "problems": [{"id": "r1", "topic": "Recursion", "level": 1, "title": "Even Digits", "source": "Like: digit recursion with n == 0 as the base case", "prompt": ["Write a recursive function <code>count_even_digits<\/code> that takes a positive integer <code>n<\/code> and returns how many of its digits are even (0, 2, 4, 6, 8).", "Do not use loops, strings, or <code>str<\/code>. Use <code>//<\/code> and <code>%<\/code>."], "examples": ">>> count_even_digits(24680)\n5\n>>> count_even_digits(13579)\n0\n>>> count_even_digits(1002)\n3", "starter": "def count_even_digits(n):\n    \"\"\"Return the number of even digits in positive integer n.\"\"\"\n    ", "hints": ["Base case: when n == 0 there are no digits left.", "Look at the last digit with n % 10, then recurse on n // 10."], "solution": "def count_even_digits(n):\n    if n == 0:\n        return 0\n    last = n % 10\n    if last % 2 == 0:\n        return 1 + count_even_digits(n // 10)\n    return count_even_digits(n // 10)\n", "tests": [{"setup": "", "expr": "count_even_digits(24680)", "expected": "5"}, {"setup": "", "expr": "count_even_digits(13579)", "expected": "0"}, {"setup": "", "expr": "count_even_digits(1002)", "expected": "3"}, {"setup": "", "expr": "count_even_digits(7)", "expected": "0"}, {"setup": "", "expr": "count_even_digits(2048)", "expected": "4"}], "idea": "Look only at the last digit with n % 10, then drop it with n // 10 and let the recursion handle the rest. n == 0 means every digit has been processed.", "mistakes": ["Missing the n == 0 base case, or writing n == 1: the first causes a RecursionError, the second skips the leading digit.", "Mixing up % and //: n % 10 is the last digit, n // 10 removes the last digit.", "Returning just 1 for an even digit and forgetting to add count_even_digits(n // 10).", "Using str(n) or a loop. The problem asks for pure arithmetic and recursion."]}, {"id": "r2", "topic": "Recursion", "level": 2, "title": "Stair Climbing", "source": "Like: tree recursion, use this or use that (counting paths)", "prompt": ["You are climbing <code>n<\/code> stairs. In one move you may climb any number of stairs from the tuple <code>steps<\/code>. Return the number of different sequences of moves that take you to exactly the top.", "Order matters: taking 1 then 2 is different from taking 2 then 1."], "examples": ">>> count_stairs(4, (1, 2))\n5\n>>> count_stairs(4, (1, 2, 3))\n7\n>>> count_stairs(5, (2,))\n0", "starter": "def count_stairs(n, steps):\n    \"\"\"Count move sequences that climb exactly n stairs.\"\"\"\n    ", "hints": ["Two base cases: n == 0 means you arrived (1 way), n < 0 means you overshot (0 ways).", "For each s in steps, make one recursive call with n - s and add the results. A list comprehension with sum works well."], "solution": "def count_stairs(n, steps):\n    if n == 0:\n        return 1\n    if n < 0:\n        return 0\n    return sum([count_stairs(n - s, steps) for s in steps])\n", "tests": [{"setup": "", "expr": "count_stairs(4, (1, 2))", "expected": "5"}, {"setup": "", "expr": "count_stairs(4, (1, 2, 3))", "expected": "7"}, {"setup": "", "expr": "count_stairs(0, (1,))", "expected": "1"}, {"setup": "", "expr": "count_stairs(5, (2,))", "expected": "0"}, {"setup": "", "expr": "count_stairs(6, (2, 3))", "expected": "2"}, {"setup": "", "expr": "count_stairs(3, (1, 2, 3))", "expected": "4"}], "idea": "At each step pick one s from steps. That leaves n - s stairs, and the total is the sum over all choices.", "mistakes": ["Writing only the n == 0 base case and not handling n < 0, so the recursion keeps going past the top.", "Returning 1 for n < 0. Overshooting the top is not a valid way, so it should be 0.", "Returning 0 for n == 0. Landing exactly on the top is 1 way.", "Recursing only on steps[0] instead of on every s and summing."]}, {"id": "r3", "topic": "Recursion", "level": 3, "title": "Subset Sums", "source": "Like: use or skip with list slicing (counting subsets)", "prompt": ["Write <code>count_subsets<\/code>, which takes a list <code>lst<\/code> of positive integers and an integer <code>target<\/code>. It returns the number of subsets of <code>lst<\/code> whose elements add up to <code>target<\/code>.", "Subsets are chosen by position, so <code>[2, 2]<\/code> has two different subsets that each contain a single 2. The empty subset sums to 0."], "examples": ">>> count_subsets([1, 2, 3, 4, 5], 5)\n3\n>>> count_subsets([2, 2, 2], 4)\n3\n>>> count_subsets([3, 5], 1)\n0", "starter": "def count_subsets(lst, target):\n    \"\"\"Number of subsets of lst (positive ints) that sum to target.\"\"\"\n    ", "hints": ["Either use lst[0] (then you still need target - lst[0] from lst[1:]) or skip it (still need target from lst[1:]).", "Base cases: target == 0 gives 1; target < 0 or empty list gives 0."], "solution": "def count_subsets(lst, target):\n    if target == 0:\n        return 1\n    if target < 0 or lst == []:\n        return 0\n    use_first = count_subsets(lst[1:], target - lst[0])\n    skip_first = count_subsets(lst[1:], target)\n    return use_first + skip_first\n", "tests": [{"setup": "", "expr": "count_subsets([1, 2, 3, 4, 5], 5)", "expected": "3"}, {"setup": "", "expr": "count_subsets([2, 2, 2], 4)", "expected": "3"}, {"setup": "", "expr": "count_subsets([], 0)", "expected": "1"}, {"setup": "", "expr": "count_subsets([3, 5], 1)", "expected": "0"}, {"setup": "", "expr": "count_subsets([1, 1, 1, 1], 2)", "expected": "6"}], "idea": "For lst[0] there are two choices: use it (target drops by lst[0]) or skip it (target stays). Add the counts of both.", "mistakes": ["The use branch does not subtract lst[0] from target, so both branches count the same thing.", "Checking lst == [] before target == 0, so ([], 0) returns 0 and the empty subset is lost.", "Reading lst[0] before checking that lst is non-empty, which raises an IndexError.", "Missing the target < 0 base case, which wastes work down to the end of the list."]}, {"id": "r4", "topic": "Recursion", "level": 3, "title": "No Double B", "source": "Like: building lists recursively (no adjacent 1s)", "prompt": ["Write <code>ab_strings<\/code>, which takes a non-negative integer <code>n<\/code> and returns a list of all strings of length <code>n<\/code> made only of the letters <code>'a'<\/code> and <code>'b'<\/code> in which no two <code>'b'<\/code> are next to each other. The strings may be in any order."], "examples": ">>> sorted(ab_strings(3))\n['aaa', 'aab', 'aba', 'baa', 'bab']\n>>> ab_strings(0)\n['']\n>>> len(ab_strings(6))\n21", "starter": "def ab_strings(n):\n    \"\"\"All length-n strings of a/b with no two adjacent b's.\"\"\"\n    ", "hints": ["Two base cases: n == 0 returns [''], n == 1 returns ['a', 'b'].", "A valid string starts with 'a' (followed by any valid string of length n-1) or with 'ba' (followed by any valid string of length n-2)."], "solution": "def ab_strings(n):\n    if n == 0:\n        return ['']\n    if n == 1:\n        return ['a', 'b']\n    return ['a' + s for s in ab_strings(n - 1)] + ['ba' + s for s in ab_strings(n - 2)]\n", "tests": [{"setup": "", "expr": "sorted(ab_strings(3))", "expected": "['aaa', 'aab', 'aba', 'baa', 'bab']"}, {"setup": "", "expr": "ab_strings(0)", "expected": "['']"}, {"setup": "", "expr": "sorted(ab_strings(1))", "expected": "['a', 'b']"}, {"setup": "", "expr": "sorted(ab_strings(2))", "expected": "['aa', 'ab', 'ba']"}, {"setup": "", "expr": "len(ab_strings(6))", "expected": "21"}], "idea": "A string starting with 'a' is 'a' followed by any valid string of length n-1. A string starting with 'b' must continue with 'a', so it is 'ba' followed by any valid string of length n-2.", "mistakes": ["Starting with 'b' and then appending a length n-1 string, which produces 'bb'.", "Missing the n == 1 base case, so n - 2 goes negative and never reaches 0.", "Returning [] for n == 0. It must be [''], a list holding the empty string, so prefixes can attach to it.", "Returning joined strings instead of a list. Use a list comprehension to add the prefix to every sub-result."]}, {"id": "r5", "topic": "Recursion", "level": 4, "title": "Digit Splits", "source": "Like: Nonplussed (inserting + between digits)", "prompt": ["Write <code>split_sum<\/code>, which takes a positive integer <code>n<\/code> with no zero digits and an integer <code>total<\/code>. Count the ways to cut the digits of <code>n<\/code> into one or more consecutive pieces so that the pieces, read as numbers, add up to <code>total<\/code>.", "For 123 the possible cuts are 1+2+3 = 6, 12+3 = 15, 1+23 = 24, and 123 = 123."], "examples": ">>> split_sum(123, 15)\n1\n>>> split_sum(123, 6)\n1\n>>> split_sum(1111, 13)\n3\n>>> split_sum(123, 7)\n0", "starter": "def split_sum(n, total):\n    \"\"\"Count ways to split the digits of n into pieces that add to total.\"\"\"\n    ", "hints": ["Choose the last piece: it is the last k digits, n % 10**k. The remaining digits are n // 10**k.", "Base case: n == 0 means all digits are used. That is 1 way if total == 0, else 0 ways.", "Try every k with a while loop (or a list comprehension) and add up the recursive results."], "solution": "def split_sum(n, total):\n    if n == 0:\n        return 1 if total == 0 else 0\n    count, k = 0, 1\n    while 10 ** (k - 1) <= n:\n        count += split_sum(n // 10 ** k, total - n % 10 ** k)\n        k += 1\n    return count\n", "tests": [{"setup": "", "expr": "split_sum(123, 15)", "expected": "1"}, {"setup": "", "expr": "split_sum(123, 6)", "expected": "1"}, {"setup": "", "expr": "split_sum(123, 123)", "expected": "1"}, {"setup": "", "expr": "split_sum(1111, 13)", "expected": "3"}, {"setup": "", "expr": "split_sum(123, 7)", "expected": "0"}, {"setup": "", "expr": "split_sum(1111, 4)", "expected": "1"}], "idea": "Try every length k for the last piece. Its value is n % 10**k, the remaining digits are n // 10**k, and the target shrinks by the piece's value.", "mistakes": ["Returning 1 at n == 0 without checking total == 0, which counts splits with the wrong sum.", "Not letting k reach the full number of digits, which drops the split where the whole number is one piece.", "Writing n % 10 * k instead of n % 10 ** k, an operator precedence mistake.", "Shortening n in the recursive call but not subtracting the piece from total."]}, {"id": "l1", "topic": "Lists & Dicts", "level": 1, "title": "Skip Multiples", "source": "Like: Exclusive (filtering with a list comprehension)", "prompt": ["Write <code>drop_multiples<\/code>, which takes a list <code>lst<\/code> and a positive integer <code>k<\/code>. Return a new list that leaves out every element whose <b>index<\/b> is a multiple of <code>k<\/code> (index 0 is always dropped).", "Write the body as a single <code>return<\/code> statement using a list comprehension."], "examples": ">>> drop_multiples([10, 20, 30, 40, 50], 2)\n[20, 40]\n>>> drop_multiples([5, 6, 7, 8], 3)\n[6, 7]\n>>> drop_multiples([1, 2, 3], 1)\n[]", "starter": "def drop_multiples(lst, k):\n    \"\"\"Elements of lst whose index is not a multiple of k.\"\"\"\n    ", "hints": ["Loop over indices: for i in range(len(lst)).", "Keep lst[i] only if i % k != 0."], "solution": "def drop_multiples(lst, k):\n    return [lst[i] for i in range(len(lst)) if i % k != 0]\n", "tests": [{"setup": "", "expr": "drop_multiples([10, 20, 30, 40, 50], 2)", "expected": "[20, 40]"}, {"setup": "", "expr": "drop_multiples([5, 6, 7, 8], 3)", "expected": "[6, 7]"}, {"setup": "", "expr": "drop_multiples([1, 2, 3], 1)", "expected": "[]"}, {"setup": "", "expr": "drop_multiples([], 3)", "expected": "[]"}], "idea": "Loop over indices with range(len(lst)) and keep only the elements whose index is not a multiple of k.", "mistakes": ["Testing the element's value (x % k != 0) instead of its index.", "Reversing the condition: i % k == 0 keeps exactly the positions that should be dropped.", "Writing a multi-line for loop with append when the problem asks for a one-line return with a list comprehension."]}, {"id": "l2", "topic": "Lists & Dicts", "level": 2, "title": "Running Totals", "source": "Like: Prefixes (prefix sums with slicing)", "prompt": ["Write <code>prefix_sums<\/code>, which takes a list of numbers and returns a list of the same length where element <code>i<\/code> is the sum of the original elements at indices 0 through <code>i<\/code>.", "Use slicing and <code>sum<\/code>."], "examples": ">>> prefix_sums([1, 2, 3, 4])\n[1, 3, 6, 10]\n>>> prefix_sums([5])\n[5]\n>>> prefix_sums([])\n[]", "starter": "def prefix_sums(lst):\n    \"\"\"Return the running totals of lst.\"\"\"\n    ", "hints": ["lst[:i + 1] is the first i + 1 elements."], "solution": "def prefix_sums(lst):\n    return [sum(lst[:i + 1]) for i in range(len(lst))]\n", "tests": [{"setup": "", "expr": "prefix_sums([1, 2, 3, 4])", "expected": "[1, 3, 6, 10]"}, {"setup": "", "expr": "prefix_sums([5])", "expected": "[5]"}, {"setup": "", "expr": "prefix_sums([])", "expected": "[]"}, {"setup": "", "expr": "prefix_sums([3, -3, 3])", "expected": "[3, 0, 3]"}], "idea": "Item i of the result is the sum of lst[:i + 1], which is the elements at indices 0 through i.", "mistakes": ["Slicing lst[:i], which leaves out the current element and makes the first item 0.", "Getting the range start or stop wrong, so the result length differs from the input.", "Adding a special case for the empty list. range(0) is already empty, so [] comes out on its own."]}, {"id": "l3", "topic": "Lists & Dicts", "level": 2, "title": "Consecutive Pairs", "source": "Like: Who's counting? (consecutive integers in a list)", "prompt": ["Write <code>count_steps_up<\/code>, which takes a list of integers and returns the number of positions <code>i<\/code> where the next element is exactly one more than element <code>i<\/code>."], "examples": ">>> count_steps_up([1, 2, 3, 5, 6])\n3\n>>> count_steps_up([3, 2, 1])\n0\n>>> count_steps_up([7, 8, 7, 8])\n2", "starter": "def count_steps_up(lst):\n    \"\"\"Count i such that lst[i + 1] == lst[i] + 1.\"\"\"\n    ", "hints": ["Only indices 0 through len(lst) - 2 have a next element.", "range(len(lst) - 1) is empty when lst has 0 or 1 elements, which handles the edge cases."], "solution": "def count_steps_up(lst):\n    return len([i for i in range(len(lst) - 1) if lst[i + 1] == lst[i] + 1])\n", "tests": [{"setup": "", "expr": "count_steps_up([1, 2, 3, 5, 6])", "expected": "3"}, {"setup": "", "expr": "count_steps_up([])", "expected": "0"}, {"setup": "", "expr": "count_steps_up([4])", "expected": "0"}, {"setup": "", "expr": "count_steps_up([3, 2, 1])", "expected": "0"}, {"setup": "", "expr": "count_steps_up([7, 8, 7, 8])", "expected": "2"}], "idea": "Only indices 0 through len(lst) - 2 have a next element, so loop over range(len(lst) - 1).", "mistakes": ["Looping over range(len(lst)), so the last element reads lst[i + 1] and raises an IndexError.", "Testing lst[i + 1] > lst[i]. The problem wants exactly one more.", "Special-casing empty and one-element lists. range(len(lst) - 1) already handles them."]}, {"id": "l4", "topic": "Lists & Dicts", "level": 2, "title": "Pizza Order", "source": "Like: Two Topping Pizzas (dictionary lookups and string loops)", "prompt": ["Write <code>order_total<\/code>. The string <code>order<\/code> has one letter per topping. The dictionary <code>menu<\/code> maps a topping letter to its price. Return the total price of the order. Letters that are not in the menu cost nothing."], "examples": ">>> menu = {'p': 2, 'm': 3, 'o': 1}\n>>> order_total('pmo', menu)\n6\n>>> order_total('ppx', menu)\n4\n>>> order_total('', menu)\n0", "starter": "def order_total(order, menu):\n    \"\"\"Total price of the toppings in order.\"\"\"\n    ", "hints": ["for letter in order: loops over a string.", "Check letter in menu before looking up menu[letter]."], "solution": "def order_total(order, menu):\n    total = 0\n    for letter in order:\n        if letter in menu:\n            total += menu[letter]\n    return total\n", "tests": [{"setup": "menu = {'p': 2, 'm': 3, 'o': 1}", "expr": "order_total('pmo', menu)", "expected": "6"}, {"setup": "menu = {'p': 2, 'm': 3, 'o': 1}", "expr": "order_total('ppx', menu)", "expected": "4"}, {"setup": "menu = {'p': 2, 'm': 3, 'o': 1}", "expr": "order_total('', menu)", "expected": "0"}, {"setup": "menu = {'p': 2, 'm': 3, 'o': 1}", "expr": "order_total('xyz', menu)", "expected": "0"}], "idea": "Loop over each letter of the string and add its price if the letter is in the dictionary.", "mistakes": ["Using menu[letter] directly, which raises a KeyError for letters not on the menu. Check letter in menu first.", "Putting return inside the loop, so only the first letter is counted.", "Putting total = 0 inside the loop, which resets it on every pass."]}, {"id": "l5", "topic": "Lists & Dicts", "level": 2, "title": "Closest Value", "source": "Like: Thanos (min and max with key)", "prompt": ["Write <code>closest<\/code>, which takes a non-empty list of numbers and a number <code>target<\/code>, and returns the element of the list closest to <code>target<\/code>. If two elements are equally close, return the one that appears first.", "Use a single <code>return<\/code> statement with <code>min<\/code> and a <code>key<\/code> function."], "examples": ">>> closest([1, 5, 9], 6)\n5\n>>> closest([1, 3], 2)\n1\n>>> closest([-4, 4, 10], 0)\n-4", "starter": "def closest(lst, target):\n    \"\"\"Element of lst nearest to target (first one on ties).\"\"\"\n    ", "hints": ["min(lst, key=lambda x: ...) compares elements by the key's value.", "The distance from x to target is abs(x - target). min returns the first minimum on ties."], "solution": "def closest(lst, target):\n    return min(lst, key=lambda x: abs(x - target))\n", "tests": [{"setup": "", "expr": "closest([1, 5, 9], 6)", "expected": "5"}, {"setup": "", "expr": "closest([1, 3], 2)", "expected": "1"}, {"setup": "", "expr": "closest([-4, 4, 10], 0)", "expected": "-4"}, {"setup": "", "expr": "closest([7], 100)", "expected": "7"}], "idea": "min(lst, key=...) compares by the key's value but returns the list element. The distance is abs(x - target).", "mistakes": ["Leaving out abs in the key (x - target), so negative numbers count as the smallest.", "Writing min([abs(x - target) for x in lst]), which returns the distance instead of the element.", "Forgetting lambda after key=, as in key=abs(x - target), which raises a NameError."]}, {"id": "l6", "topic": "Lists & Dicts", "level": 3, "title": "Local Peaks", "source": "Like: Seek Once (comparing nearby elements)", "prompt": ["Write <code>local_peaks<\/code>, which takes a list of numbers and returns a list of the elements that are strictly greater than both of their neighbors, in order. The first and last elements have only one neighbor, so they are never peaks."], "examples": ">>> local_peaks([1, 3, 2, 5, 4, 4])\n[3, 5]\n>>> local_peaks([1, 2, 3])\n[]\n>>> local_peaks([2, 2, 2])\n[]", "starter": "def local_peaks(lst):\n    \"\"\"Elements strictly greater than both neighbors.\"\"\"\n    ", "hints": ["Only indices 1 through len(lst) - 2 can be peaks: range(1, len(lst) - 1).", "Compare lst[i] with lst[i - 1] and lst[i + 1]."], "solution": "def local_peaks(lst):\n    return [lst[i] for i in range(1, len(lst) - 1) if lst[i] > lst[i - 1] and lst[i] > lst[i + 1]]\n", "tests": [{"setup": "", "expr": "local_peaks([1, 3, 2, 5, 4, 4])", "expected": "[3, 5]"}, {"setup": "", "expr": "local_peaks([1, 2, 3])", "expected": "[]"}, {"setup": "", "expr": "local_peaks([2, 2, 2])", "expected": "[]"}, {"setup": "", "expr": "local_peaks([5])", "expected": "[]"}, {"setup": "", "expr": "local_peaks([0, 9, 0, 9, 0])", "expected": "[9, 9]"}], "idea": "Only middle elements (indices 1 through len(lst) - 2) have two neighbors. Compare each with lst[i - 1] and lst[i + 1].", "mistakes": ["Starting range at 0: lst[-1] is the last element in Python, so there is no error, but the answer is quietly wrong.", "Using >= instead of >. Equal neighbors do not make a peak.", "Comparing with only one neighbor."]}, {"id": "h1", "topic": "Higher-Order Functions", "level": 4, "title": "Alternate", "source": "Like: Midterm 1 material (higher-order functions that return functions)", "prompt": ["Write <code>alternate<\/code>, which takes two one-argument functions <code>f<\/code> and <code>g<\/code> and returns a function <code>h<\/code>. Calling <code>h(n)<\/code> returns a function that applies <code>f<\/code>, then <code>g<\/code>, then <code>f<\/code>, then <code>g<\/code>, and so on, for a total of <code>n<\/code> applications. <code>h(0)<\/code> returns a function that gives back its argument unchanged.", "For example <code>h(3)(x)<\/code> computes <code>f(g(f(x)))<\/code>."], "examples": ">>> add1 = lambda x: x + 1\n>>> dbl = lambda x: x * 2\n>>> alternate(add1, dbl)(3)(5)   # add1, dbl, add1\n13\n>>> alternate(add1, dbl)(2)(5)   # add1, dbl\n12\n>>> alternate(add1, dbl)(0)(5)\n5", "starter": "def alternate(f, g):\n    \"\"\"Return h so that h(n)(x) applies f, g, f, g, ... n times to x.\"\"\"\n    ", "hints": ["h(n) should return a function of x. Define it with def or lambda.", "After applying f once, the remaining n - 1 applications start with g. That is alternate(g, f)(n - 1)."], "solution": "def alternate(f, g):\n    def h(n):\n        if n == 0:\n            return lambda x: x\n        def apply(x):\n            return alternate(g, f)(n - 1)(f(x))\n        return apply\n    return h\n", "tests": [{"setup": "add1 = lambda x: x + 1\ndbl = lambda x: x * 2", "expr": "alternate(add1, dbl)(3)(5)", "expected": "13"}, {"setup": "add1 = lambda x: x + 1\ndbl = lambda x: x * 2", "expr": "alternate(add1, dbl)(2)(5)", "expected": "12"}, {"setup": "add1 = lambda x: x + 1\ndbl = lambda x: x * 2", "expr": "alternate(add1, dbl)(0)(5)", "expected": "5"}, {"setup": "add1 = lambda x: x + 1\ndbl = lambda x: x * 2", "expr": "alternate(add1, dbl)(1)(5)", "expected": "6"}, {"setup": "add1 = lambda x: x + 1\ndbl = lambda x: x * 2", "expr": "alternate(add1, dbl)(4)(5)", "expected": "26"}], "idea": "h(n) must return a function. Apply f first; the remaining n - 1 applications start with g, so call alternate(g, f)(n - 1) with f and g swapped.", "mistakes": ["Returning a number from h(n) instead of a function that waits for x.", "Recursing with alternate(f, g) again, so the order never swaps and every step starts with f.", "Forgetting n == 0, which should return lambda x: x, the identity function.", "Applying g before f, which gets the order backwards."]}, {"id": "k1", "topic": "Linked Lists", "level": 1, "title": "Remove Value", "source": "Like: Exclusive (removing a value from a linked list)", "prompt": ["A linked list is either <code>Link.empty<\/code> or a <code>Link<\/code> with a <code>first<\/code> element and a <code>rest<\/code> that is a linked list. Linked lists print like <code>(3 4 5)<\/code>. The helper <code>ll(3, 4, 5)<\/code> builds one.", "Write <code>remove_value<\/code>, which takes a linked list <code>lnk<\/code> and a value <code>v<\/code> and returns a linked list with every occurrence of <code>v<\/code> removed. You may either build a new list or change <code>lnk<\/code>, but you must return the result."], "examples": ">>> remove_value(ll(1, 2, 1, 3), 1)\n(2 3)\n>>> remove_value(ll(5), 5)\n()\n>>> remove_value(ll(1, 2), 9)\n(1 2)", "starter": "def remove_value(lnk, v):\n    \"\"\"Return lnk without any element equal to v.\"\"\"\n    ", "hints": ["Base case: if lnk == Link.empty, return Link.empty.", "Recurse on lnk.rest first. If lnk.first == v, the answer is just that recursive result; otherwise wrap it with Link(lnk.first, ...)."], "solution": "def remove_value(lnk, v):\n    if lnk == Link.empty:\n        return Link.empty\n    rest = remove_value(lnk.rest, v)\n    if lnk.first == v:\n        return rest\n    return Link(lnk.first, rest)\n", "tests": [{"setup": "", "expr": "remove_value(ll(1, 2, 1, 3), 1)", "expected": "ll(2, 3)"}, {"setup": "", "expr": "remove_value(ll(5), 5)", "expected": "Link.empty"}, {"setup": "", "expr": "remove_value(Link.empty, 3)", "expected": "Link.empty"}, {"setup": "", "expr": "remove_value(ll(1, 2), 9)", "expected": "ll(1, 2)"}, {"setup": "", "expr": "remove_value(ll(4, 4, 4), 4)", "expected": "Link.empty"}], "idea": "Recurse on lnk.rest first, then decide about the current element: if it equals v return the processed rest, otherwise attach it with Link(lnk.first, rest).", "mistakes": ["Missing the lnk == Link.empty base case, so lnk.first on () raises an AttributeError.", "Still returning Link(lnk.first, rest) when the element equals v, which keeps the value you wanted to remove.", "Calling remove_value(lnk.rest, v) without using its return value.", "Returning early after removing the first v, so later copies stay."]}, {"id": "k2", "topic": "Linked Lists", "level": 2, "title": "Alternating Sum", "source": "Like: Just Add and Multiply (alternating operations)", "prompt": ["Write <code>alt_sum<\/code>, which takes a linked list of numbers and returns the first element minus the second, plus the third, minus the fourth, and so on. The sum of an empty list is 0.", "Solve it recursively with no loops."], "examples": ">>> alt_sum(ll(5, 3, 1))\n3\n>>> alt_sum(ll(10, 1, 1, 1))\n9\n>>> alt_sum(Link.empty)\n0", "starter": "def alt_sum(lnk):\n    \"\"\"first - second + third - fourth ...\"\"\"\n    ", "hints": ["a - b + c - d = a - (b - c + d). The part in parentheses is alt_sum of the rest."], "solution": "def alt_sum(lnk):\n    if lnk == Link.empty:\n        return 0\n    return lnk.first - alt_sum(lnk.rest)\n", "tests": [{"setup": "", "expr": "alt_sum(ll(5, 3, 1))", "expected": "3"}, {"setup": "", "expr": "alt_sum(ll(4))", "expected": "4"}, {"setup": "", "expr": "alt_sum(Link.empty)", "expected": "0"}, {"setup": "", "expr": "alt_sum(ll(10, 1, 1, 1))", "expected": "9"}], "idea": "a - b + c - d = a - (b - c + d), and the part in parentheses is alt_sum of the rest, so the result is lnk.first - alt_sum(lnk.rest).", "mistakes": ["Writing lnk.first + alt_sum(lnk.rest), so the signs never alternate.", "Not returning 0 for the empty list, so the recursion fails at the end.", "Reading lnk.rest.first, which fails on a one-element list because lnk.rest is ()."]}, {"id": "k3", "topic": "Linked Lists", "level": 2, "title": "After Party", "source": "Like: After Party (finding one value after another)", "prompt": ["Write <code>appears_after<\/code>, which takes a linked list <code>lnk<\/code> and two values <code>a<\/code> and <code>b<\/code>. Return <code>True<\/code> if some occurrence of <code>b<\/code> comes later in the list than some occurrence of <code>a<\/code>, and <code>False<\/code> otherwise. If <code>a<\/code> and <code>b<\/code> are equal, the list must contain that value at least twice."], "examples": ">>> appears_after(ll(1, 2, 3), 1, 3)\nTrue\n>>> appears_after(ll(3, 2, 1), 1, 3)\nFalse\n>>> appears_after(ll(1), 1, 1)\nFalse", "starter": "def appears_after(lnk, a, b):\n    \"\"\"Is there a b somewhere after an a?\"\"\"\n    ", "hints": ["Walk the list once with a while loop, remembering whether you have seen a yet.", "Check for b before you record a, so that a == b needs two occurrences."], "solution": "def appears_after(lnk, a, b):\n    seen_a = False\n    while lnk != Link.empty:\n        if lnk.first == b and seen_a:\n            return True\n        if lnk.first == a:\n            seen_a = True\n        lnk = lnk.rest\n    return False\n", "tests": [{"setup": "", "expr": "appears_after(ll(1, 2, 3), 1, 3)", "expected": "True"}, {"setup": "", "expr": "appears_after(ll(3, 2, 1), 1, 3)", "expected": "False"}, {"setup": "", "expr": "appears_after(ll(1, 1), 1, 1)", "expected": "True"}, {"setup": "", "expr": "appears_after(ll(1), 1, 1)", "expected": "False"}, {"setup": "", "expr": "appears_after(Link.empty, 1, 2)", "expected": "False"}, {"setup": "", "expr": "appears_after(ll(2, 1, 5, 2), 1, 2)", "expected": "True"}], "idea": "Walk the list once and keep a boolean for whether you have seen a yet. When you meet b after seeing a, return True.", "mistakes": ["Updating seen_a before checking b, so with a == b a single element returns True.", "Checking only that b appears, without requiring an a before it.", "Forgetting lnk = lnk.rest in the loop, which loops forever.", "Returning False before the whole list has been checked."]}, {"id": "k4", "topic": "Linked Lists", "level": 3, "title": "Insert After", "source": "Like: Pumpkin Splice Latte (mutating and splicing linked lists)", "prompt": ["Write <code>insert_after<\/code>, which takes a non-empty linked list <code>lnk<\/code>, an index <code>i<\/code>, and a value <code>v<\/code>. Change <code>lnk<\/code> so that <code>v<\/code> comes right after the element at index <code>i<\/code> (index 0 is the first element). You may assume <code>i<\/code> is a valid index. Do not return anything; mutate the list."], "examples": ">>> a = ll(1, 2, 3)\n>>> insert_after(a, 0, 9)\n>>> a\n(1 9 2 3)\n>>> insert_after(a, 2, 7)\n>>> a\n(1 9 2 7 3)", "starter": "def insert_after(lnk, i, v):\n    \"\"\"Insert v after index i of lnk, by mutation.\"\"\"\n    ", "hints": ["When i == 0, set lnk.rest = Link(v, lnk.rest).", "Otherwise the same job is needed one step down the list with index i - 1."], "solution": "def insert_after(lnk, i, v):\n    if i == 0:\n        lnk.rest = Link(v, lnk.rest)\n    else:\n        insert_after(lnk.rest, i - 1, v)\n", "tests": [{"setup": "a = ll(1, 2, 3)\ninsert_after(a, 0, 9)", "expr": "a", "expected": "ll(1, 9, 2, 3)"}, {"setup": "a = ll(1, 2, 3)\ninsert_after(a, 2, 9)", "expr": "a", "expected": "ll(1, 2, 3, 9)"}, {"setup": "a = ll(5)\ninsert_after(a, 0, 6)", "expr": "a", "expected": "ll(5, 6)"}, {"setup": "a = ll(1, 2, 3)\ninsert_after(a, 0, 9)\ninsert_after(a, 2, 7)", "expr": "a", "expected": "ll(1, 9, 2, 7, 3)"}], "idea": "When i == 0, attach the new node after lnk with lnk.rest = Link(v, lnk.rest). Otherwise do the same thing on lnk.rest with i - 1.", "mistakes": ["Writing lnk.first = v when i == 0, which overwrites an element instead of inserting.", "Not linking the new node to lnk.rest, so every later element is lost.", "Returning a new list. The problem asks you to mutate in place, with no return value.", "Decreasing i in the recursive call without moving to lnk.rest."]}, {"id": "k5", "topic": "Linked Lists", "level": 3, "title": "Common Values", "source": "Like: Both Ways (common values in sorted linked lists)", "prompt": ["Write <code>common<\/code>, which takes two linked lists <code>a<\/code> and <code>b<\/code>, each in strictly increasing order. Return a new linked list, also in increasing order, containing the values that appear in both."], "examples": ">>> common(ll(1, 3, 5, 7), ll(3, 4, 5, 8))\n(3 5)\n>>> common(ll(1, 2), ll(3, 4))\n()", "starter": "def common(a, b):\n    \"\"\"Values present in both sorted linked lists.\"\"\"\n    ", "hints": ["If either list is empty, there is nothing in common.", "Compare a.first and b.first. If equal, keep it and move both forward. Otherwise move forward in the list with the smaller first element."], "solution": "def common(a, b):\n    if a == Link.empty or b == Link.empty:\n        return Link.empty\n    if a.first == b.first:\n        return Link(a.first, common(a.rest, b.rest))\n    if a.first < b.first:\n        return common(a.rest, b)\n    return common(a, b.rest)\n", "tests": [{"setup": "", "expr": "common(ll(1, 3, 5, 7), ll(3, 4, 5, 8))", "expected": "ll(3, 5)"}, {"setup": "", "expr": "common(ll(1, 2), ll(3, 4))", "expected": "Link.empty"}, {"setup": "", "expr": "common(ll(1, 2, 3), ll(1, 2, 3))", "expected": "ll(1, 2, 3)"}, {"setup": "", "expr": "common(Link.empty, ll(1))", "expected": "Link.empty"}, {"setup": "", "expr": "common(ll(2, 4, 6), ll(1, 2, 6, 9))", "expected": "ll(2, 6)"}], "idea": "Compare the two first elements: if equal, keep it and advance both lists; otherwise advance the list with the smaller first element. Stop when either list is empty.", "mistakes": ["When a.first < b.first, advancing b. You should advance the smaller one (a).", "Advancing only one list on a match, so the next round compares the same value again.", "Missing the base case that returns Link.empty when either list is empty."]}, {"id": "k6", "topic": "Linked Lists", "level": 4, "title": "Longest Under Limit", "source": "Like: How Long is this Exam? (longest run under a sum limit)", "prompt": ["Write <code>longest_under<\/code>, which takes a linked list <code>lnk<\/code> of positive integers and a number <code>limit<\/code>. Return the length of the longest run of <b>consecutive<\/b> elements whose sum is at most <code>limit<\/code>. Return 0 if no element fits."], "examples": ">>> longest_under(ll(3, 1, 2, 7, 4), 6)\n3\n>>> longest_under(ll(5, 5, 5), 4)\n0\n>>> longest_under(ll(2, 9, 2, 2), 5)\n2", "starter": "def longest_under(lnk, limit):\n    \"\"\"Length of the longest consecutive run with sum <= limit.\"\"\"\n    ", "hints": ["Try every starting link. From each start, walk forward adding elements until the sum would go over the limit.", "Keep a best length across all starts. Two nested while loops, each with its own pointer."], "solution": "def longest_under(lnk, limit):\n    best = 0\n    start = lnk\n    while start != Link.empty:\n        total, length, cur = 0, 0, start\n        while cur != Link.empty and total + cur.first <= limit:\n            total += cur.first\n            length += 1\n            cur = cur.rest\n        best = max(best, length)\n        start = start.rest\n    return best\n", "tests": [{"setup": "", "expr": "longest_under(ll(3, 1, 2, 7, 4), 6)", "expected": "3"}, {"setup": "", "expr": "longest_under(ll(5, 5, 5), 4)", "expected": "0"}, {"setup": "", "expr": "longest_under(ll(1, 1, 1), 10)", "expected": "3"}, {"setup": "", "expr": "longest_under(Link.empty, 5)", "expected": "0"}, {"setup": "", "expr": "longest_under(ll(2, 9, 2, 2), 5)", "expected": "2"}], "idea": "Try every starting link. From each start keep adding elements until the sum would exceed limit, and track the longest length. Use two while loops, each with its own pointer.", "mistakes": ["The inner loop does not restart from start, so only one scan happens.", "Using < limit. The problem says at most, so it must be <=.", "Adding first and checking after, so the element that overflows the limit is counted.", "Not updating best at the end of each start."]}]};
+(function () {
+  var KEY = "cs61a-mt2-practice-v1";
+  var store = { code: {}, best: {}, hints: {} };
+  try { var raw = localStorage.getItem(KEY); if (raw) store = Object.assign(store, JSON.parse(raw)); } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+  var $ = function (id) { return document.getElementById(id); };
+  var problems = DATA.problems, cur = problems[0], running = false, solArmed = false, solShown = false, last = {};
+
+  function renderIndex() {
+    var nav = $("index"); nav.textContent = ""; var last = "";
+    problems.forEach(function (p) {
+      if (p.topic !== last) { var g = document.createElement("div"); g.className = "grp"; g.textContent = p.topic; nav.appendChild(g); last = p.topic; }
+      var b = document.createElement("button");
+      b.setAttribute("aria-current", p.id === cur.id ? "true" : "false");
+      var n = document.createElement("span"); n.textContent = p.title;
+      var s = document.createElement("span"); s.className = "score";
+      var best = store.best[p.id];
+      if (best) { s.textContent = best[0] + "/" + best[1]; if (best[0] === best[1]) { s.className += " done"; s.textContent = "✓ " + s.textContent; } }
+      b.appendChild(n); b.appendChild(s);
+      b.addEventListener("click", function () { select(p.id, true); });
+      nav.appendChild(b);
+    });
+    var done = problems.filter(function (p) { var b = store.best[p.id]; return b && b[0] === b[1]; }).length;
+    $("prog-text").textContent = done + " / " + problems.length + " done";
+    $("prog-bar").style.width = (100 * done / problems.length) + "%";
+  }
+
+  function stars(n) { return "Difficulty " + "●".repeat(n) + "○".repeat(4 - n); }
+
+  function select(id, focus) {
+    if (cur) { store.code[cur.id] = $("code").value; save(); }
+    cur = problems.filter(function (p) { return p.id === id; })[0];
+    solArmed = false;
+    $("c-topic").textContent = cur.topic;
+    $("c-level").textContent = stars(cur.level);
+    $("c-title").textContent = cur.title;
+    $("c-source").textContent = cur.source;
+    $("c-prompt").innerHTML = cur.prompt.map(function (t) { return "<p>" + t + "</p>"; }).join("");
+    $("c-examples").textContent = cur.examples;
+    $("c-prelude").textContent = DATA.prelude;
+    $("code").value = store.code[cur.id] != null ? store.code[cur.id] : cur.starter;
+    $("status").textContent = "";
+    $("sol").textContent = "Show solution";
+    $("solbox").hidden = true; solShown = false;
+    if (ctl && asking) ctl.abort();
+    $("ask-out").textContent = ""; $("ask-q").value = "";
+    renderHints();
+    $("results").innerHTML = '<div class="empty">Run the tests and the result of every test case appears here.</div>';
+    renderIndex();
+    fit();
+    if (focus) { var t = $("code"); t.focus(); t.selectionStart = t.selectionEnd = t.value.length; }
+  }
+
+  function renderHints() {
+    var box = $("hints"); box.textContent = "";
+    var n = store.hints[cur.id] || 0;
+    for (var i = 0; i < n; i++) {
+      var d = document.createElement("div"); d.className = "hint";
+      var b = document.createElement("b"); b.textContent = "Hint " + (i + 1) + ": ";
+      d.appendChild(b); d.appendChild(document.createTextNode(cur.hints[i])); box.appendChild(d);
+    }
+    $("hint").disabled = n >= cur.hints.length;
+  }
+
+  function fit() { var t = $("code"); t.style.height = "auto"; t.style.height = Math.max(200, t.scrollHeight + 4) + "px"; }
+
+  function row(t, r) {
+    var d = document.createElement("div"); d.className = "t";
+    var pill = document.createElement("span"); pill.className = "pill " + (r.status === "PASS" ? "pass" : "fail");
+    pill.textContent = r.status === "PASS" ? "Pass" : (r.status === "ERR" ? "Error" : "Fail");
+    var body = document.createElement("div"); body.className = "body";
+    if (t.setup) { var s = document.createElement("div"); s.className = "setup"; s.textContent = t.setup; body.appendChild(s); }
+    var e = document.createElement("div"); e.textContent = ">>> " + t.expr; body.appendChild(e);
+    if (r.status === "FAIL") {
+      var f = document.createElement("div"); f.className = "diff";
+      f.innerHTML = "<span>Expected </span>"; f.appendChild(document.createTextNode(r.exp));
+      var g = document.createElement("div"); g.className = "diff";
+      g.innerHTML = "<span>Got </span>"; g.appendChild(document.createTextNode(r.got));
+      body.appendChild(f); body.appendChild(g);
+    } else if (r.status === "ERR") {
+      var x = document.createElement("div"); x.className = "diff"; x.textContent = r.got; body.appendChild(x);
+    } else {
+      var o = document.createElement("div"); o.style.color = "var(--muted)"; o.textContent = r.got; body.appendChild(o);
+    }
+    d.appendChild(pill); d.appendChild(body); return d;
+  }
+
+  function showResults(res) {
+    var pass = res.filter(function (r) { return r.status === "PASS"; }).length, total = res.length;
+    var box = $("results"); box.textContent = "";
+    var sm = document.createElement("div"); sm.className = "summary";
+    var p = document.createElement("span"); p.className = "pill " + (pass === total ? "pass" : "fail"); p.textContent = pass + " / " + total;
+    var m = document.createElement("span"); m.textContent = pass === total ? "All tests passed" : (total - pass) + (total - pass === 1 ? " test is still failing" : " tests are still failing");
+    sm.appendChild(p); sm.appendChild(m); box.appendChild(sm);
+    var list = document.createElement("div"); list.className = "tests";
+    res.forEach(function (r, i) { list.appendChild(row(cur.tests[i], r)); });
+    box.appendChild(list);
+    var b = store.best[cur.id];
+    if (!b || pass > b[0]) { store.best[cur.id] = [pass, total]; }
+    last[cur.id] = { res: res, code: $("code").value };
+    save(); renderIndex();
+    if (solShown) renderExplain();
+  }
+
+  function diagnose(res) {
+    var fails = [];
+    res.forEach(function (r, i) { if (r.status !== "PASS") fails.push(i); });
+    var f = fails[0], r = res[f], t = cur.tests[f], out = [];
+    var all = res.every(function (x) { return x.status === "ERR"; });
+    out.push("First failing test: " + t.expr + ". Expected " + (r.status === "FAIL" ? r.exp : cur.tests[f].expected) + ", " + (r.status === "FAIL" ? "you got " + r.got : "your code raised: " + r.got) + ".");
+    var g = r.got || "";
+    if (r.status === "FAIL" && g === "None") out.push("Your function returned None: usually a branch is missing a return, or you called the recursive function without returning its result.");
+    if (g.indexOf("RecursionError") >= 0) out.push("RecursionError: the recursion never stops. Check that you wrote a base case and that the argument really gets smaller on every call.");
+    if (g.indexOf("AttributeError") >= 0) out.push("AttributeError: most likely you took .first or .rest of the empty linked list (). Check lnk == Link.empty first.");
+    if (g.indexOf("IndexError") >= 0) out.push("IndexError: an index is out of range. Check your range bounds and the cases of an empty list or a single element.");
+    if (g.indexOf("NameError") >= 0) out.push("NameError: you used a name that is not defined. Check spelling, or a missing lambda.");
+    if (g.indexOf("TypeError") >= 0) out.push("TypeError: a type mismatch, such as adding a list and an integer, or calling something that is not a function.");
+    if (g.indexOf("KeyError") >= 0) out.push("KeyError: that key is not in the dictionary. Test with in first.");
+    if (fails.length === res.length && !all) out.push("No test passed. Check the overall approach and the return type (for example returning a number where a list is expected).");
+    else if (fails.length < res.length) out.push((res.length - fails.length) + " test(s) passed, so the main idea works. The problem is probably an edge case (empty list, 0, the last element).");
+    return out;
+  }
+
+  function renderExplain() {
+    var box = $("explain"); box.textContent = "";
+    function sec(title) { var s = document.createElement("section"); var h = document.createElement("h4"); h.textContent = title; s.appendChild(h); box.appendChild(s); return s; }
+    function para(parent, text) { var p = document.createElement("p"); p.textContent = text; parent.appendChild(p); return p; }
+    var mine = sec("What went wrong in your code");
+    var L = last[cur.id], code = $("code").value;
+    if (!L) {
+      para(mine, "You have not run the tests yet. Click Run tests and this panel will analyze your code from the results.");
+    } else {
+      var pass = L.res.filter(function (r) { return r.status === "PASS"; }).length;
+      var d = document.createElement("div"); d.className = "mine" + (pass === L.res.length ? " good" : "");
+      if (pass === L.res.length) {
+        para(d, "Your latest run passed every test. Compare with the reference solution on the left to see how the approaches differ.");
+      } else {
+        para(d, "Your latest run passed " + pass + " / " + L.res.length + ".");
+        var ul = document.createElement("ul"); ul.className = "why";
+        diagnose(L.res).forEach(function (x) { var li = document.createElement("li"); li.textContent = x; ul.appendChild(li); });
+        d.appendChild(ul);
+      }
+      if (L.code !== code) { var sm = document.createElement("small"); sm.textContent = "You changed the code after the last run. Run again to refresh this panel."; d.appendChild(sm); }
+      mine.appendChild(d);
+      var sm2 = document.createElement("small"); sm2.textContent = "This is inferred automatically from the test results. It is not a line-by-line review of your code.";
+      mine.appendChild(sm2);
+    }
+    var idea = sec("Idea behind the solution"); para(idea, cur.idea);
+    var mis = sec("Common mistakes on this problem");
+    var ul2 = document.createElement("ul");
+    cur.mistakes.forEach(function (x) { var li = document.createElement("li"); li.textContent = x; ul2.appendChild(li); });
+    mis.appendChild(ul2);
+  }
+
+  var sampleFn = null, asking = false, ctl = null, askHist = {};
+  if (window.claude && window.claude.use) {
+    window.claude.use("sample").then(function (f) { if (f) { sampleFn = f; $("ask").hidden = false; } }).catch(function () {});
+  }
+  function plainPrompt() { var d = document.createElement("div"); d.innerHTML = cur.prompt.join("\n"); return d.textContent; }
+  function ctxText() {
+    var code = $("code").value;
+    var numbered = code.split("\n").map(function (l, i) { return (i + 1) + " | " + l; }).join("\n");
+    var L = last[cur.id], res = "The student has not run the tests yet.";
+    if (L) {
+      var fails = [];
+      L.res.forEach(function (r, i) { if (r.status !== "PASS") fails.push((cur.tests[i].setup ? cur.tests[i].setup + "; " : "") + cur.tests[i].expr + " expected " + (r.status === "FAIL" ? r.exp : cur.tests[i].expected) + ", actual " + (r.status === "FAIL" ? r.got : "error " + r.got)); });
+      res = "Latest test run (the code may have been edited since): passed " + (L.res.length - fails.length) + "/" + L.res.length + (fails.length ? ". Failing tests:\n" + fails.slice(0, 4).join("\n") : ".");
+    }
+    return "Problem:\n" + plainPrompt() + "\n\nExamples:\n" + cur.examples + "\n\nStudent code (line number | code):\n" + numbered + "\n\n" + res;
+  }
+  var RULES_FIND = 'You are a CS61A teaching assistant. A student is working on the practice problem below. Check the student code and point out the exact lines that are wrong. Rules: 1) Only report real mistakes, or problems that would make a test fail. Do not nitpick. 2) For each issue give the line number (use the numbered code, starting at 1; if the problem is a missing piece of code such as a missing base case, use line 0), say what is wrong, and say roughly how that line should change (a short code snippet is fine, but do not give the full solution). 3) If the code is already correct, return an empty issues array and say so in summary. 4) Write in English, direct, friendly and brief. Return only one JSON object and no other text, in this format: {"summary": "one or two sentences", "issues": [{"line": 3, "problem": "what is wrong", "suggestion": "how to fix it"}]}';
+  var RULES_CHAT = 'You are a CS61A teaching assistant. A student is working on the practice problem below and will ask questions about their own code. Answer in English, briefly, and cite specific line numbers. You may explain mistakes and how to fix them and give short code examples, but do not give the complete solution function unless the student explicitly asks for it.';
+  function setAsking(on) {
+    asking = on; $("ask-find").disabled = on; $("ask-chat").disabled = on; $("ask-stop").hidden = !on;
+  }
+  function askError(e) {
+    var c = e && e.code, m = "Something went wrong. Please try again in a moment.";
+    if (c === "cancelled") return "";
+    if (c === "not_granted" || c === "sampling_disabled" || c === "not_declared" || c === "capability_disabled") { $("ask").hidden = true; return ""; }
+    if (c === "rate_limited") m = "Too many requests, or your Claude usage limit has run out for now. Try again later.";
+    else if (c === "invalid_json") m = "Claude replied in the wrong format. Try once more.";
+    else if (c === "session_expired") m = "Your sign-in expired. Reload the page and sign in again.";
+    else if (c === "refused") m = "Claude did not answer this question. Try rephrasing it.";
+    return m;
+  }
+  function status(text) { var o = $("ask-out"); o.textContent = ""; var d = document.createElement("div"); d.className = "status-line"; d.textContent = text; o.appendChild(d); }
+
+  function renderAnnotated(code, r) {
+    var o = $("ask-out"); o.textContent = "";
+    var issues = (r && Array.isArray(r.issues)) ? r.issues : [];
+    var lines = code.split("\n"), byLine = {}, general = [];
+    issues.forEach(function (it) {
+      var n = parseInt(it && it.line, 10);
+      if (n >= 1 && n <= lines.length) { (byLine[n] = byLine[n] || []).push(it); } else { general.push(it); }
+    });
+    if (r && r.summary) { var sm = document.createElement("p"); sm.className = "sum"; sm.textContent = String(r.summary); o.appendChild(sm); }
+    function addIssue(parent, it) {
+      var p = document.createElement("p"); p.textContent = String(it.problem || ""); parent.appendChild(p);
+      if (it.suggestion) { var f = document.createElement("p"); f.className = "fix"; f.textContent = "How to fix: " + String(it.suggestion); parent.appendChild(f); }
+    }
+    if (general.length) {
+      var g = document.createElement("div"); g.className = "general";
+      var h = document.createElement("p"); h.textContent = "Missing or wrong overall:"; h.style.fontWeight = "600"; g.appendChild(h);
+      general.forEach(function (it) { addIssue(g, it); }); o.appendChild(g);
+    }
+    var box = document.createElement("div"); box.className = "annot";
+    lines.forEach(function (l, i) {
+      var row = document.createElement("div"); row.className = "ln" + (byLine[i + 1] ? " flag" : "");
+      var n = document.createElement("i"); n.textContent = String(i + 1);
+      var c = document.createElement("span"); c.textContent = l.length ? l : " ";
+      row.appendChild(n); row.appendChild(c);
+      if (byLine[i + 1]) {
+        var note = document.createElement("div"); note.className = "note";
+        byLine[i + 1].forEach(function (it) { addIssue(note, it); });
+        row.appendChild(note);
+      }
+      box.appendChild(row);
+    });
+    o.appendChild(box);
+    var cap = document.createElement("small"); cap.className = "ask-note"; cap.textContent = "This is the code you submitted for checking. Red lines are where Claude sees a problem."; o.appendChild(cap);
+  }
+
+  function askFind() {
+    if (!sampleFn || asking) return;
+    var code = $("code").value;
+    if (!code.trim()) { status("Write some code first, then check it."); return; }
+    var q = $("ask-q").value.trim();
+    var input = RULES_FIND + "\n\n" + ctxText() + (q ? "\n\nThe student also asks: " + q : "");
+    ctl = new AbortController(); setAsking(true); status("Claude is reading your code…");
+    sampleFn.json(input, { signal: ctl.signal, cache: false })
+      .then(function (r) { renderAnnotated(code, r); })
+      .catch(function (e) { var m = askError(e); if (m) status(m); else if (e && e.code === "cancelled") status("Stopped."); })
+      .then(function () { setAsking(false); });
+  }
+
+  function askChat() {
+    if (!sampleFn || asking) return;
+    var q = $("ask-q").value.trim();
+    if (!q) { status("Type your question in the box first."); return; }
+    var hist = askHist[cur.id] = askHist[cur.id] || [];
+    var o = $("ask-out");
+    if (!hist.length) o.textContent = "";
+    var qb = document.createElement("div"); qb.className = "bubble q"; qb.textContent = q; o.appendChild(qb);
+    var ab = document.createElement("div"); ab.className = "bubble a"; ab.textContent = "Claude is thinking…"; o.appendChild(ab);
+    $("ask-q").value = "";
+    var turns = [{ role: "user", content: RULES_CHAT + "\n\n" + ctxText() }].concat(hist.slice(-8), [{ role: "user", content: q }]);
+    ctl = new AbortController(); setAsking(true);
+    sampleFn(turns, { signal: ctl.signal, cache: false, onText: function (u) { ab.textContent = u.text; } })
+      .then(function (r) { hist.push({ role: "user", content: q }, { role: "assistant", content: r.text }); ab.textContent = r.text; })
+      .catch(function (e) {
+        var m = askError(e);
+        if (e && e.text) ab.textContent = e.text + (m ? "\n\n(" + m + ")" : "");
+        else if (m) ab.textContent = m; else ab.remove();
+      })
+      .then(function () { setAsking(false); });
+  }
+  $("ask-find").addEventListener("click", askFind);
+  $("ask-chat").addEventListener("click", askChat);
+  $("ask-stop").addEventListener("click", function () { if (ctl) ctl.abort(); });
+  $("ask-q").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); if ($("ask-q").value.trim()) askChat(); else askFind(); } });
+
+  function showError(msg) {
+    var box = $("results"); box.textContent = "";
+    var d = document.createElement("div"); d.className = "err"; d.textContent = msg; box.appendChild(d);
+  }
+
+  var runId = 0, queued = false, watchdog = null;
+  function run() {
+    if (typeof Sk === "undefined") { $("status").textContent = "The Python engine is still loading. Wait a few seconds and try again."; return; }
+    if (running) { queued = true; $("status").textContent = "The previous run is still going. It will run again right after."; return; }
+    var code = $("code").value; store.code[cur.id] = code; save();
+    running = true; queued = false; $("status").textContent = "Running…";
+    var myId = ++runId, lines = [], thisProblem = cur;
+    watchdog = setTimeout(function () {
+      if (running && runId === myId) {
+        runId++; running = false; $("status").textContent = "";
+        showError("This run took longer than 15 seconds and was abandoned. Check for an infinite loop, then click Run tests again.");
+        if (queued) { queued = false; run(); }
+      }
+    }, 15000);
+    Sk.configure({
+      output: function (s) { lines.push(s); },
+      read: function (x) { if (!Sk.builtinFiles || Sk.builtinFiles.files[x] === undefined) throw "File not found: '" + x + "'"; return Sk.builtinFiles.files[x]; },
+      __future__: Sk.python3, execLimit: 8000
+    });
+    var prog = buildProgram(DATA.prelude, code, thisProblem.tests);
+    var p;
+    try { p = Sk.misceval.asyncToPromise(function () { return Sk.importMainWithBody("<stdin>", false, prog, true); }); }
+    catch (err) { p = Promise.reject(err); }
+    p.then(function () { if (myId === runId && thisProblem === cur) showResults(parseResults(lines, cur.tests.length)); })
+      .catch(function (e) {
+        if (myId !== runId || thisProblem !== cur) return;
+        var s = String(e && e.toString ? e.toString() : e);
+        if (s.indexOf("TimeLimitError") >= 0) s = "The program ran for more than 8 seconds and was stopped. Check for an infinite loop (a while condition that is always true).";
+        else if (s.indexOf("SyntaxError") >= 0 || s.indexOf("IndentationError") >= 0) {
+          var off = DATA.prelude.split("\n").length;
+          s = s.replace(/on line (\d+)/g, function (m, n) { var k = parseInt(n, 10) - off; return "on line " + (k >= 1 ? k : n); });
+        }
+        showError(s);
+      })
+      .then(function () {
+        clearTimeout(watchdog);
+        if (myId === runId) { running = false; $("status").textContent = ""; }
+        if (queued && !running) { queued = false; run(); }
+      });
+  }
+
+  $("run").addEventListener("click", run);
+  $("hint").addEventListener("click", function () {
+    store.hints[cur.id] = Math.min(cur.hints.length, (store.hints[cur.id] || 0) + 1); save(); renderHints();
+  });
+  $("reset").addEventListener("click", function () {
+    if (!$("reset").dataset.armed) {
+      $("reset").dataset.armed = "1"; $("reset").textContent = "Click again to confirm reset";
+      setTimeout(function () { delete $("reset").dataset.armed; $("reset").textContent = "Reset code"; }, 3000); return;
+    }
+    delete $("reset").dataset.armed; $("reset").textContent = "Reset code";
+    $("code").value = cur.starter; store.code[cur.id] = cur.starter; save(); fit();
+  });
+  $("sol").addEventListener("click", function () {
+    if (!solArmed) { solArmed = true; $("sol").textContent = "Try it yourself first? Click again to show"; return; }
+    $("sol-code").textContent = cur.solution; renderExplain(); $("solbox").hidden = false; solShown = true; $("sol").textContent = "Solution shown";
+  });
+  $("code").addEventListener("input", function () { fit(); store.code[cur.id] = $("code").value; save(); });
+  $("code").addEventListener("keydown", function (e) {
+    var t = e.target, v = t.value, s0 = t.selectionStart, e0 = t.selectionEnd;
+    var ls = v.lastIndexOf("\n", s0 - 1) + 1;
+    function put(text, selStart, selEnd) { t.value = text; t.selectionStart = selStart; t.selectionEnd = selEnd; fit(); store.code[cur.id] = t.value; save(); }
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); return; }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      var line = v.slice(ls, s0), indent = line.match(/^ */)[0].length, trimmed = line.trim();
+      var n = indent + (/:\s*$/.test(trimmed) ? 4 : 0);
+      if (/^(return|pass|break|continue|raise)\b/.test(trimmed) && n >= 4) n -= 4;
+      var ins = "\n" + new Array(n + 1).join(" ");
+      put(v.slice(0, s0) + ins + v.slice(e0), s0 + ins.length, s0 + ins.length);
+    } else if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+      if (v.slice(s0, e0).indexOf("\n") >= 0) {
+        var blockEnd = e0, lines = v.slice(ls, blockEnd).split("\n");
+        var nt = lines.map(function (l) { return "    " + l; }).join("\n");
+        put(v.slice(0, ls) + nt + v.slice(blockEnd), s0 + 4, e0 + 4 * lines.length);
+      } else {
+        var col = s0 - ls, add = 4 - (col % 4), sp = new Array(add + 1).join(" ");
+        put(v.slice(0, s0) + sp + v.slice(e0), s0 + add, s0 + add);
+      }
+    } else if (e.key === "Tab" && e.shiftKey) {
+      e.preventDefault();
+      var lines2 = v.slice(ls, e0).split("\n"), removed = [];
+      var nt2 = lines2.map(function (l) { var m = l.match(/^ {1,4}/); var k = m ? m[0].length : 0; removed.push(k); return l.slice(k); }).join("\n");
+      put(v.slice(0, ls) + nt2 + v.slice(e0), Math.max(ls, s0 - removed[0]), e0 - removed.reduce(function (a, b) { return a + b; }, 0));
+    } else if (e.key === "Backspace" && s0 === e0 && s0 > ls && /^ +$/.test(v.slice(ls, s0))) {
+      e.preventDefault();
+      var rm = ((s0 - ls) % 4) || 4;
+      put(v.slice(0, s0 - rm) + v.slice(s0), s0 - rm, s0 - rm);
+    }
+  });
+  select(cur.id);
+})();
+</script>
+
+</body></html>
